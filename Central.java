@@ -10,14 +10,18 @@ public class Central extends JPanel {
     private Scanner scanner;
     private Conveyor belt1;
     private Conveyor belt2;
+    private Conveyor belt3;
+    private Conveyor belt4;
 
     private Central(){
         for (int i=0; i<parcels.length; i++){
-            parcels[i] = new Parcel((int) (Math.random()*30)+20, (int) (Math.random()*30)+20, (int) (Math.random()*30)+20, (int)(Math.random()*3), i*-170, 270);
+            parcels[i] = new Parcel((int) (Math.random()*30)+20, (int) (Math.random()*30)+20, (int) (Math.random()*30)+20, (int)(Math.random()*3), i*-170, 290);
         }
         scanner = new Scanner(520, 370, 100, 100, 100);
         belt1 = new Conveyor(1, 0, 240, 450, 70);
-        belt2 = new Conveyor(1, 520, 240, 500, 70);
+        belt2 = new Conveyor(3, 550, 240, 500, 70);
+        belt3 = new Conveyor (2, 465, 0, 70, 220);
+        belt4 = new Conveyor(4, 465, 330, 70, 260);
         addKeyListener(new KeyListener(){
             @Override
             public void keyTyped(KeyEvent e){
@@ -40,11 +44,12 @@ public class Central extends JPanel {
             scanner.scanColor(parcel);
             scanner.updateSpeeds(parcel);
             belt1.setPaused(scanner);
-            belt2.getParcelState(scanner);
             parcel.move();
         }
-        belt1.move();
-        belt2.move();
+        belt2.move(parcels);
+        belt1.move(parcels);
+        belt3.move(parcels);
+        belt4.move(parcels);
     }
 
     public void paint(Graphics g){
@@ -52,17 +57,19 @@ public class Central extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(Color.GRAY);
-        belt1.paint(g2d);
-        scanner.paint(g2d);
         belt1.paint(g2d);
         belt2.paint(g2d);
+        scanner.scanning(parcels);
+        scanner.paint(g2d);
+        belt2.paint(g2d);
+        belt1.paint(g2d);
+        belt3.paint(g2d);
+        belt4.paint(g2d);
         for (Parcel parcel:parcels) {
             scanner.scanned(parcel);
             scanner.scanColor(parcel);
             scanner.updateSpeeds(parcel);
             belt1.setPaused(scanner);
-            belt2.getParcelState(scanner);
             parcel.paint(g2d);
             scanner.paint(g2d);
         }
