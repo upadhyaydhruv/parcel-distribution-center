@@ -11,7 +11,6 @@ public class Scanner {
     private int x;
     private int y;
     private int l, w;
-    private boolean lightOn = false;
     private boolean doneScanning = false;
     private boolean scanning = false;
     private BufferedImage plane = null;
@@ -19,7 +18,6 @@ public class Scanner {
     private BufferedImage question = null;
     private int color;
     private int counter;
-    public boolean isRunning;
 
     public Scanner(int x, int y, int length, int width, int height){
         this.x = x;
@@ -44,8 +42,17 @@ public class Scanner {
             counter++;
     }
 
+    public void scanning(Parcel[] p){
+        scanning = false;
+        for (Parcel parcel:p){
+            if (parcel.getX()>=430 && parcel.getX()<=530 && parcel.getY()>=240 && parcel.getY()<=330){
+                scanning = true;
+            }
+        }
+    }
+
     public void scanned(Parcel p){
-        doneScanning = (p.getX()>=480);
+        doneScanning = (p.getX()>=490);
     }
 
     public boolean getScanned(){
@@ -89,6 +96,11 @@ public class Scanner {
 
     public void paint(Graphics2D g){
 
+        if (scanning){
+            g.setColor(Color.RED);
+            g.fillRect(475, 300, 20, 20);
+        }
+
         if (doneScanning&&color==0){
             g.drawImage(plane,10,492,null);
         }
@@ -98,8 +110,6 @@ public class Scanner {
         else if (doneScanning&&color==2){
             g.drawImage(question,10,490,null);
         }
-
-        g.setColor(Color.RED);
-        g.fillRect(x, y,200,200);
     }
 }
+
