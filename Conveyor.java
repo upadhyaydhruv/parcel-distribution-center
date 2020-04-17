@@ -127,7 +127,11 @@ public class Conveyor {
         return paused;
     }
 
+    public boolean isOn(){
+        return this.on;
+    }
+
     public void setPaused(Scanner s) {
-        this.paused = s.isRunning();
+        this.paused = s.isPaused();
     }
 }
