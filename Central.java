@@ -12,16 +12,18 @@ public class Central extends JPanel {
     private Conveyor belt2;
     private Conveyor belt3;
     private Conveyor belt4;
+    private Display screen;
 
     private Central(){
         for (int i=0; i<parcels.length; i++){
             parcels[i] = new Parcel((int) (Math.random()*30)+20, (int) (Math.random()*30)+20, (int) (Math.random()*30)+20, (int)(Math.random()*3), i*-170, 290);
         }
-        scanner = new Scanner(520, 370, 100, 100, 100);
-        belt1 = new Conveyor(1, 0, 240, 450, 70);
-        belt2 = new Conveyor(3, 550, 240, 500, 70);
-        belt3 = new Conveyor (2, 465, 0, 70, 220);
-        belt4 = new Conveyor(4, 465, 330, 70, 260);
+        scanner = new Scanner(435, 220, 120, 120);
+        belt1 = new Conveyor(1, 0, 240, 430, 70);
+        belt2 = new Conveyor(3, 570, 240, 480, 70);
+        belt3 = new Conveyor (2, 465, 0, 70, 200);
+        belt4 = new Conveyor(4, 465, 350, 70, 240);
+        screen = new Display();
         addKeyListener(new KeyListener(){
             @Override
             public void keyTyped(KeyEvent e){
@@ -40,8 +42,8 @@ public class Central extends JPanel {
 
     public void move() {
         for (Parcel parcel : parcels) {
-            scanner.scanned(parcel);
             scanner.scanColor(parcel);
+            scanner.scanned(parcel);
             scanner.updateSpeeds(parcel);
             belt1.setPaused(scanner);
             parcel.move();
@@ -60,18 +62,20 @@ public class Central extends JPanel {
         belt1.paint(g2d);
         belt2.paint(g2d);
         scanner.scanning(parcels);
-        scanner.paint(g2d);
+        scanner.paint(g2d, belt1);
         belt2.paint(g2d);
         belt1.paint(g2d);
         belt3.paint(g2d);
         belt4.paint(g2d);
+
         for (Parcel parcel:parcels) {
             scanner.scanned(parcel);
             scanner.scanColor(parcel);
             scanner.updateSpeeds(parcel);
+            screen.paint(g2d, scanner);
             belt1.setPaused(scanner);
             parcel.paint(g2d);
-            scanner.paint(g2d);
+            scanner.paint(g2d, belt1);
         }
     }
 
