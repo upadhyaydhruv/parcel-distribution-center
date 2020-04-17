@@ -45,8 +45,12 @@ public class Scanner {
     public void scanning(Parcel[] p){
         scanning = false;
         for (Parcel parcel:p){
-            if (parcel.getX()+parcel.getLength()>=430 && parcel.getX()+parcel.getLength()<=530 && parcel.getY()>=240 && parcel.getY()<=330){
+            if (parcel.getX()+parcel.getLength()>=430 && parcel.getX()-(int) (parcel.getWidth()*Math.cos(45))<=530 && parcel.getY()>=240 && parcel.getY()-parcel.getHeight()<=330){
                 scanning = true;
+                parcel.setScanned(true);
+            }
+            else{
+                parcel.setScanned(false);
             }
         }
     }
@@ -55,53 +59,79 @@ public class Scanner {
         doneScanning = (p.getX()>=490);
     }
 
-    public void isAligned(Parcel p){
-
-    }
-
     public void scanColor(Parcel p){
         color = p.getColor();
     }
 
-    public boolean isRunning(){
+    public boolean isPaused(){
         return counter%2!=0;
     }
 
     public void updateSpeeds(Parcel p){
-        if (counter%2!=0&&!doneScanning){
-            p.setXVel(0);
-            p.setYVel(0);
+        if (p.getScanning()) {
+            if (!doneScanning) {
+                p.setXVel(1);
+                p.setYVel(0);
+            }
+            if (doneScanning && p.getColor() == 0) {
+                p.setXVel(0);
+                p.setYVel(-1);
+            } else if (doneScanning && p.getColor() == 1) {
+                p.setXVel(1);
+                p.setYVel(0);
+            } else if (doneScanning && p.getColor() == 2) {
+                p.setXVel(0);
+                p.setYVel(1);
+            }
         }
-        else if (counter%2==0&&!doneScanning){
-            p.setXVel(1);
-            p.setYVel(0);
-        }
-        if (doneScanning && p.getColor()==0){
-            p.setXVel(0);
-            p.setYVel(-1);
-        }
-        else if (doneScanning && p.getColor()==1){
-            p.setXVel(1);
-            p.setYVel(0);
-        }
-        else if (doneScanning && p.getColor()==2){
-            p.setXVel(0);
-            p.setYVel(1);
+        if (!p.getScanning()){
+            if (doneScanning) {}
+            else{
+                if (counter%2!=0){
+                    p.setXVel(0);
+                    p.setYVel(0);
+                }
+                else {
+                    p.setXVel(1);
+                    p.setYVel(0);
+                }
+            }
         }
     }
 
+    public boolean getDoneScanning(){
+        return this.doneScanning;
+    }
 
-    public void paint(Graphics2D g){
+    public int getColor(){
+        return this.color;
+    }
 
-        if (doneScanning&&color==0){
-            g.drawImage(plane,10,492,null);
+    public void paint(Graphics2D g, Conveyor con){
+        g.setColor(Color.BLACK);
+        g.fillRect(137, 447, 45, 205);
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRect(140, 450, 40, 200);
+        g.setColor(Color.BLACK);
+        g.fillRect(145, 505, 30, 30);
+        g.setStroke(new BasicStroke(5));
+
+        g.drawLine(0, 492, 101, 492);
+        g.drawLine(101, 492, 101, 592);
+        g.drawLine(101, 592, 0, 592);
+        g.drawLine(0, 592, 0, 592);
+
+        g.drawLine(137, 480, 120, 480);
+        g.drawLine(120, 480, 120, 500);
+        g.drawLine(120, 500, 101, 500);
+        g.setStroke(new BasicStroke(1));
+        if (this.isPaused() || !con.isOn()){
+           g.setColor(Color.RED);
         }
-        else if (doneScanning&&color==1){
-            g.drawImage(truck,10,503,null);
+        else {
+            g.setColor(Color.GREEN);
         }
-        else if (doneScanning&&color==2){
-            g.drawImage(question,10,490,null);
-        }
+        g.fillRect(150, 510, 20, 20);
 
         g.setColor(Color.BLACK);
 
@@ -121,19 +151,15 @@ public class Scanner {
         Color c = new Color(0, 0, 128, 50);
         g.setColor(c);
         g.fillRect((int) (x+Math.cos(45)*40), (int) (y+Math.cos(45)*40), (int) (w-2*Math.cos(45)*40), (int) (w-2*Math.cos(45)*40));
-        //g.fillRect(x, y, 10, 10);
+        g.fillRect(x, y, 10, 10);
 
 
         if (scanning) {
             g.setColor(Color.RED);
-            g.fillOval((int) (x+Math.cos(45)*20), (int) (y+Math.cos(45)*20), 10, 10);
-            g.fillOval((int) (x+w-Math.cos(45)*20), (int) (y+Math.cos(45)*20), 10, 10);
-            g.fillOval((int) (x+Math.cos(45)*20), (int) (y+l-Math.cos(45)*20), 10, 10);
-            g.fillOval((int) (x+w-Math.cos(45)*20), (int) (y+l-Math.cos(45)*20), 10, 10);
+            g.fillOval((int) (x+Math.cos(45)*20)-5, (int) (y+Math.cos(45)*20)-5, 10, 10);
+            g.fillOval((int) (x+w-Math.cos(45)*20)-5, (int) (y+Math.cos(45)*20)-5, 10, 10);
+            g.fillOval((int) (x+Math.cos(45)*20)-5, (int) (y+l-Math.cos(45)*20)-5, 10, 10);
+            g.fillOval((int) (x+w-Math.cos(45)*20)-5, (int) (y+l-Math.cos(45)*20)-5, 10, 10);
         }
-
-        //g.fillRect(x, y, l, w);
-
     }
 }
-
