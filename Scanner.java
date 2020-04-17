@@ -19,7 +19,7 @@ public class Scanner {
     private int color;
     private int counter;
 
-    public Scanner(int x, int y, int length, int width, int height){
+    public Scanner(int x, int y, int length, int width){
         this.x = x;
         this.y = y;
         this.l = length;
@@ -45,7 +45,7 @@ public class Scanner {
     public void scanning(Parcel[] p){
         scanning = false;
         for (Parcel parcel:p){
-            if (parcel.getX()>=430 && parcel.getX()<=530 && parcel.getY()>=240 && parcel.getY()<=330){
+            if (parcel.getX()+parcel.getLength()>=430 && parcel.getX()+parcel.getLength()<=530 && parcel.getY()>=240 && parcel.getY()<=330){
                 scanning = true;
             }
         }
@@ -55,12 +55,8 @@ public class Scanner {
         doneScanning = (p.getX()>=490);
     }
 
-    public boolean getScanned(){
-        return doneScanning;
-    }
+    public void isAligned(Parcel p){
 
-    public int getColor(){
-        return color;
     }
 
     public void scanColor(Parcel p){
@@ -94,12 +90,8 @@ public class Scanner {
         }
     }
 
-    public void paint(Graphics2D g){
 
-        if (scanning){
-            g.setColor(Color.RED);
-            g.fillRect(475, 300, 20, 20);
-        }
+    public void paint(Graphics2D g){
 
         if (doneScanning&&color==0){
             g.drawImage(plane,10,492,null);
@@ -110,6 +102,38 @@ public class Scanner {
         else if (doneScanning&&color==2){
             g.drawImage(question,10,490,null);
         }
+
+        g.setColor(Color.BLACK);
+
+        int[] xPoints1 = {x, (int) (x+Math.cos(45)*40), (int) (x+Math.cos(45)*40), x, x};
+        int[] yPoints1 = {y, (int) (y+Math.cos(45)*40), (int) (y+l-Math.cos(45)*40),y+l, y};
+        g.fillPolygon(xPoints1, yPoints1, 4);
+        int[] xPoints2 = {x, (int) (x+Math.cos(45)*40), (int) (x+w-Math.cos(45)*40), x+w, x};
+        int[] yPoints2 = {y+l, (int) (y+l-Math.cos(45)*40), (int) (y+l-Math.cos(45)*40), y+l, y+l};
+        g.fillPolygon(xPoints2, yPoints2, 4);
+        int[] xPoints3 = {(int) (x+w-Math.cos(45)*40), (int) (x+w-Math.cos(45)*40), x+w, x+w, (int) (x+w-Math.cos(45)*40)};
+        int[] yPoints3 = {(int) (y+l-Math.cos(45)*40), (int) (y+Math.cos(45)*40), y, y+l, (int) (y+l-Math.cos(45)*40)};
+        g.fillPolygon(xPoints3, yPoints3, 4);
+        int[] xPoints4 = {x, x+w, (int) (x+w-Math.cos(45)*40), (int) (x+Math.cos(45)*40), x};
+        int[] yPoints4 = {y, y, (int) (y+Math.cos(45)*40), (int) (y+Math.cos(45)*40), y};
+        g.fillPolygon(xPoints4, yPoints4, 4);
+
+        Color c = new Color(0, 0, 128, 50);
+        g.setColor(c);
+        g.fillRect((int) (x+Math.cos(45)*40), (int) (y+Math.cos(45)*40), (int) (w-2*Math.cos(45)*40), (int) (w-2*Math.cos(45)*40));
+        //g.fillRect(x, y, 10, 10);
+
+
+        if (scanning) {
+            g.setColor(Color.RED);
+            g.fillOval((int) (x+Math.cos(45)*20), (int) (y+Math.cos(45)*20), 10, 10);
+            g.fillOval((int) (x+w-Math.cos(45)*20), (int) (y+Math.cos(45)*20), 10, 10);
+            g.fillOval((int) (x+Math.cos(45)*20), (int) (y+l-Math.cos(45)*20), 10, 10);
+            g.fillOval((int) (x+w-Math.cos(45)*20), (int) (y+l-Math.cos(45)*20), 10, 10);
+        }
+
+        //g.fillRect(x, y, l, w);
+
     }
 }
 
